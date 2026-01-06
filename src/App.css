@@ -1,0 +1,13 @@
+.app{
+    display: flex;
+    align-items: flex-start;
+}
+
+.login{
+    margin: 0px auto;
+}
+
+.login .imgGoogle{
+    height: 40px;
+    width: 40px;
+}
