@@ -11,3 +11,13 @@
     height: 40px;
     width: 40px;
 }
+
+.navbar{
+    top: 0;
+    left: 0;
+    background-color: #DAB1DA;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    width: 100vw;
+}
