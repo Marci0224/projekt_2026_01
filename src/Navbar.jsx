@@ -3,13 +3,16 @@ import { Avatar, Button, Stack, Typography } from '@mui/material'
 import { deepPurple } from '@mui/material/colors'
 import { signOut } from 'firebase/auth'
 import React from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-export default function Navbar({user}) {
+export default function Navbar({user, userData}) {
 
     async function logout() {
         await signOut(auth);
     }
+
+    
 
   return (
     <div className='navbar'>
