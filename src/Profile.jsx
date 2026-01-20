@@ -1,6 +1,7 @@
 import { Password } from '@mui/icons-material';
 import { Button, TextField, Typography } from '@mui/material'
 import { signOut } from 'firebase/auth';
+
 import { collection, doc, setDoc } from 'firebase/firestore';
 import React from 'react'
 import { useState } from 'react'

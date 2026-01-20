@@ -25,9 +25,6 @@ export default function App() {
   const [userData, setUserData] =useState(null);
   const [loading, setLoading] = useState(true);
 
-  
-
-
   useEffect(()=>{
     const us=onAuthStateChanged(auth, async (currentUser) =>{
       setUser(currentUser);
@@ -49,7 +46,7 @@ export default function App() {
 
 
   function ProtectedRoute({ user, loading, children }) {
-    if (loading) return <div>Betöltés...</div>; // <--- Amíg nem tudjuk az auth állapotot, várunk
+    if (loading) return <div>Betöltés...</div>; 
     if (!user) return <Navigate to="/login" replace />;
     return children;
   }

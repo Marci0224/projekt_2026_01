@@ -19,8 +19,6 @@ export default function Signup({auth,user,db}) {
 
   const navigate = useNavigate();
 
-
-
   async function addUser() {
     await addDoc(collection(db, "users"), {username:"",email:email,password:password,avatar:""});
   }
