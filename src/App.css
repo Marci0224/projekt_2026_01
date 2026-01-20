@@ -3,7 +3,13 @@
     align-items: flex-start;
 }
 
+.home{
+    padding-top: 100px;
+    margin: 0px auto;
+}
+
 .login{
+    margin-top: 100px;
     margin: 0px auto;
 }
 
@@ -44,6 +50,8 @@
     border: 1px solid black;
     background-color: lightskyblue;
     padding: 5px;
+    margin: 10px;
+    margin-right: 5px;
 }
 
 .uzenetek .kapott{
@@ -51,6 +59,8 @@
     border: 1px solid black;
     background-color: lightyellow;
     padding: 5px;
+    margin: 10px;
+    margin-left: 5px;
 }
 
 .uzenetek .gomb{

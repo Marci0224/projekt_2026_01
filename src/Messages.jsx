@@ -1,9 +1,9 @@
 import React from 'react'
 import Navbar from './Navbar'
 import { useEffect } from 'react'
-import { addDoc, collection, getDocs, or, query, where } from 'firebase/firestore';
+import { addDoc, collection, getDocs, or, query, where, orderBy, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
-import { FormControl, InputLabel, List, ListItemButton, ListItemText, MenuItem, OutlinedInput, Select } from '@mui/material';
+import { FormControl, InputLabel, List, ListItemButton, ListItemText, MenuItem, OutlinedInput, Select} from '@mui/material';
 
 export default function Messages({user,db,userData}) {
 
@@ -11,10 +11,14 @@ export default function Messages({user,db,userData}) {
     const [users,setUsers]=useState([]);
     const [cimzett,setCimzett]=useState("");
     const [uzenet,setUzenet]=useState("");
+    const [refresh,setRefresh]=useState(false);
 
     async function sendUzenet() {
-        let ujLevel={felado:userData.email,fogado:cimzett,uzenet:uzenet}
-        await addDoc(collection(db, "uzenetek"), ujLevel);
+        if(uzenet.length>0){
+            let ujLevel={felado:userData.email,fogado:cimzett,uzenet:uzenet,datum:serverTimestamp()}
+            await addDoc(collection(db, "uzenetek"), ujLevel);
+        }
+        setRefresh(!refresh);
     }
 
     
@@ -34,19 +38,23 @@ export default function Messages({user,db,userData}) {
 
     useEffect(()=>{
         async function getMessages() {
+            setMessages([]);
             const adatCollection = collection(db, 'uzenetek');
             console.log(userData);
-            const adatSnapshot = await getDocs(query(collection(db, 'uzenetek'), or (where("fogado", "==", userData.email),where("felado","==",userData.email))));
-            const adatList = adatSnapshot.docs.map(doc => ({ ...doc.data(), id:doc.id }));
+            const adatSnapshot = await getDocs(query(collection(db, 'uzenetek'), or (where("fogado", "==", userData.email),where("felado","==",userData.email)),orderBy("datum", "asc")));
+            const adatList = adatSnapshot.docs.map(doc => ({ ...doc.data(), id:doc.id })).filter(x=>(x.fogado==cimzett) || (x.felado==cimzett));
             setMessages(adatList);
             console.log(adatList);
         }
         if(userData){
             getMessages();
         }
-    },[userData]);
+    },[userData,cimzett,refresh]);
 
+    /*console.log(cimzett);
+    
     console.log(users);
+    console.log(messages);*/
     
   return (
     <>

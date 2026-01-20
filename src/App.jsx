@@ -7,49 +7,64 @@ import './App.css'
 import Login from './Login';
 import Users from './Users';
 import Send from './Send';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate} from 'react-router-dom';
 import Home from './Home.jsx';
 import { useEffect } from 'react';
 import Messages from './Messages.jsx';
 import Profile from './Profile.jsx';
 import Signup from './Signup.jsx';
+import { useMemo } from 'react';
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 export default function App() {
-  const [count, setCount] = useState(0);
-  const [user, setUser] = useState({});
-  const [userData, setUserData] =useState([]);
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] =useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const app=initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth=getAuth(app);
-
-  async function getUserData() {
-    if(user){
-      console.log(user);
-      const adatSnapshot = await getDocs(query(collection(db, 'users'), where("email", "==", user.email)));
-      console.log(adatSnapshot);
-      setUserData(adatSnapshot.docs[0].data());
-    }
-    console.log(userData);
-  }
+  
 
 
   useEffect(()=>{
-    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
-    if(userData){
-      getUserData();
-    }
+    const us=onAuthStateChanged(auth, async (currentUser) =>{
+      setUser(currentUser);
+      if(currentUser){
+        const adatSnapshot = await getDocs(query(collection(db, 'users'), where("email", "==", currentUser.email)));
+        console.log(adatSnapshot);
+        if(!adatSnapshot.empty){
+          setUserData(adatSnapshot.docs[0].data());
+        }
+      } else{
+        setUserData(null);
+      }
+      setLoading(false);
+    });
+    console.log(userData);
+    return ()=>us();
   },[])
 
-   const router = createBrowserRouter([
-    { path: "/", element: <Home/> },
-    { path: "/login", element: <Login auth={auth} user={user} db={db}/> },
-    { path: "/messages", element: <Messages user={user} db={db} userData={userData}/> },
-    { path: "/send", element: <Send auth={auth}/> },
-    { path: "/users", element: <Users auth={auth}/> },
-    { path: "/signup", element: <Signup auth={auth} user={user} db={db}/>},
-    { path: "/profile", element: <Profile auth={auth} user={user} userData={userData}/> }
-  ]);
+
+
+  function ProtectedRoute({ user, loading, children }) {
+    if (loading) return <div>Betöltés...</div>; // <--- Amíg nem tudjuk az auth állapotot, várunk
+    if (!user) return <Navigate to="/login" replace />;
+    return children;
+  }
+
+   const router = useMemo(() => createBrowserRouter([
+    { path: "/", element: <Home /> },
+    { path: "/login", element: <Login auth={auth} user={user} db={db} /> },
+    { path: "/signup", element: <Signup auth={auth} user={user} db={db} /> },
+    { path: "/messages", element: <ProtectedRoute user={user} loading={loading}><Messages user={user} db={db} userData={userData} /></ProtectedRoute> },
+    { path: "/send", element: <Send auth={auth} /> },
+    { path: "/users", element: <ProtectedRoute user={user} loading={loading}><Users auth={auth} /></ProtectedRoute> },
+    { path: "/profile", element: <ProtectedRoute user={user} loading={loading}><Profile auth={auth} user={user} userData={userData} /></ProtectedRoute> }
+  ]), [user, userData, loading]);
+
+  if (loading) return <div>Éppen betölt...</div>;
 
   return (
     <div className='app'>

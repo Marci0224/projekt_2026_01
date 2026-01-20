@@ -22,21 +22,15 @@ export default function Navbar({user, userData}) {
                     Home
                 </Typography>
             </Link>
-            <Link to={user? "/messages" : "/"} style={{textDecoration:'none'}}>
+            <Link to={userData? "/messages" : "/"} style={{textDecoration:'none'}}>
                 <Typography variant='h5'>
                     Messages
                 </Typography>
             </Link>
-            <Link to={user ? "/users" : "/"} style={{textDecoration:'none'}}>
-                <Typography variant='h5'>
-                    Users
-                </Typography>
-            </Link>
         </Stack>
         <Stack sx={{display:'flex', flexDirection:'row', gap:'5px',verticalAlign:'middle',padding:"10px"}}>
-            <Typography variant='h6'>Marcell</Typography>
-            <Link to="/profile" style={{textDecoration:'none'}}><Avatar sx={{ bgcolor: deepPurple[500] }}>
-        M</Avatar></Link>
+            <Typography variant='h6'>{userData ? userData.username : ""}</Typography>
+            <Link to="/profile" style={{textDecoration:'none'}}><Avatar sx={{ bgcolor: deepPurple[500] }}>{userData ? userData.username[0].toUpperCase() : ""}</Avatar></Link>
         </Stack>
     </div>
   )

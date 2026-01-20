@@ -65,7 +65,7 @@ export default function Login({auth,user,db}) {
   return (
     <>
       <Navbar/>
-      <Stack className='login' spacing={2} sx={{border:'1px solid purple',padding:'10px',width:'300px',textAlign:"center",marginTop:'50px'}}>
+      <Stack className='login' spacing={2} sx={{border:'1px solid purple',padding:'10px',width:'300px',textAlign:"center",marginTop:'70px'}}>
         <h2>Login</h2>
         <FormControl variant="standard">
           <InputLabel htmlFor="email-input" color='secondary'>
